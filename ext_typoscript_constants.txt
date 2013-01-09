@@ -1,0 +1,31 @@
+###
+# This are the default TS-constants for powermail_optin
+##
+
+plugin.powermail_optin {
+	
+	# cat=plugin.powermail_optin/file/010; type=file[html,htm,tmpl,txt]; label= Template File for emails: HTML-template file for emails (see EXT:powermail_optin/templates/tmpl_confirmationemail.html for an example)
+	template.confirmationemail = EXT:powermail_optin/templates/tmpl_confirmationemail.html
+	
+	# cat=plugin.powermail_optin/file/020; type=file[html,htm,tmpl,txt]; label= Template File for message: HTML-template file for confirmation-needed message in frontend (see EXT:powermail_optin/templates/tmpl_confirmationmessage.html for an example)
+	template.confirmationmessage = EXT:powermail_optin/templates/tmpl_confirmationmessage.html
+	
+	# cat=plugin.powermail_optin//110; type=text; label= Overwrite Email: Overwrite email for confirmation link with a static email (maybe if admin wants to get the confirmation link instead of the sender)
+	email.receiverOverwrite = 
+	
+	# cat=plugin.powermail_optin//120; type=text; label= CC Email address: Email address for copy of confirmation email (maybe admin for testing)
+	email.cc = 
+	
+	# cat=plugin.powermail_optin//130; type=text; label= Confirmation email subject: Overwrite default subject with your own subject
+	email.subjectoverwrite = 
+	
+	# cat=plugin.powermail_optin//140; type=text; label= Confirmation email sender: Overwrite name of sender
+	email.senderOverwrite = 
+	
+	# cat=plugin.powermail_optin//150; type=text; label= Confirmation email senderemail: Overwrite email address of sender
+	email.senderEmailOverwrite = 
+	
+	# cat=plugin.powermail_optin//999; type=boolean; label= Debug Output: Show values which are inserted in the db and show values from email
+	debug = 0
+	
+}

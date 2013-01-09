@@ -1,0 +1,19 @@
+Powermail_optin HTML Template for confirmation message in frontend after submit
+
+Confirmation Message:	 							###POWERMAILOPTIN_LL_CONFIRMATION_MESSAGE###
+Value from any powermail Field:						###UID34### (example for UID34 value)
+-------------------------------------------------------------------------------------------------
+Any Dynamicmarker (Genericmarker) for Locallang:	###POWERMAILOPTIN_LL_ANYTEXT###
+													Example TypoScript setup:
+													plugin.tx_powermailoptin._LOCAL_LANG.default.powermailoptin_ll_anytext = bla in english
+													plugin.tx_powermailoptin._LOCAL_LANG.de.powermailoptin_ll_anytext = bla in german
+-------------------------------------------------------------------------------------------------
+Any Dynamicmarker (Genericmarker) for TypoScript:	###POWERMAILOPTIN_TS_ANYTEXT###
+													Example TypoScript setup:
+													plugin.tx_powermailoptin.powermailoptin_ts.anytext = TEXT
+													plugin.tx_powermailoptin.powermailoptin_ts.anytext.value = bla
+
+
+<!-- ###POWERMAILOPTIN_CONFIRMATIONMESSAGE### begin -->
+	###POWERMAILOPTIN_LL_CONFIRMATION_MESSAGE###
+<!-- ###POWERMAILOPTIN_CONFIRMATIONMESSAGE### end -->

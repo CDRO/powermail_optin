@@ -1,0 +1,28 @@
+Powermail_optin HTML Template for confirmation email with confirmation link
+
+URL for link: 										###POWERMAILOPTIN_LINK###
+Hash code:											###POWERMAILOPTIN_HASH###
+Mail uid:											###POWERMAILOPTIN_MAILUID###
+Target Page ID:										###POWERMAILOPTIN_PID###
+Link Label											###POWERMAILOPTIN_LINKLABEL###
+Text 1												###POWERMAILOPTIN_TEXT1###
+Text 2												###POWERMAILOPTIN_TEXT2###
+Value from any powermail Field:						###UID34### (example for UID34 value)
+-------------------------------------------------------------------------------------------------
+Any Dynamicmarker (Genericmarker) for Locallang:	###POWERMAILOPTIN_LL_ANYTEXT###
+													Example TypoScript setup:
+													plugin.tx_powermailoptin._LOCAL_LANG.default.powermailoptin_ll_anytext = bla in english
+													plugin.tx_powermailoptin._LOCAL_LANG.de.powermailoptin_ll_anytext = bla in german
+-------------------------------------------------------------------------------------------------
+Any Dynamicmarker (Genericmarker) for TypoScript:	###POWERMAILOPTIN_TS_ANYTEXT###
+													Example TypoScript setup:
+													plugin.tx_powermailoptin.powermailoptin_ts.anytext = TEXT
+													plugin.tx_powermailoptin.powermailoptin_ts.anytext.value = bla
+
+
+<!-- ###POWERMAILOPTIN_CONFIRMATIONEMAIL### begin -->
+	###POWERMAILOPTIN_TEXT1###<br /><br />
+	<a href="###POWERMAILOPTIN_LINK###">###POWERMAILOPTIN_LINKLABEL###</a><br />
+	###POWERMAILOPTIN_LINK###<br /><br />
+	###POWERMAILOPTIN_TEXT2###
+<!-- ###POWERMAILOPTIN_CONFIRMATIONEMAIL### end -->

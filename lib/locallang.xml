@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for plugin &quot;tx_powermail_pi1&quot;</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="email_subject">Confirmation needed</label>
+			<label index="email_linklabel">Confirmation link</label>
+			<label index="email_text1">Thank you for using our form on our homepage. To complete the form operation, please use the link below:</label>
+			<label index="email_text2">Your homepage team</label>
+			<label index="powermailoptin_ll_confirmation_message">Thank you for your message. We've sent you an email with a confirmation link. Please use this link to go on.</label>
+			<label index="database_content">No mailcontent: Double opt-in mail was send instead of default mail</label>
+			<label index="database_noip">IP logging disabled</label>
+			<label index="confirm_redirect">If you can see this, please use this link</label>
+			<label index="confirm_alreadyfilled">You have alredy finished the confirmation.</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="email_subject">Bestätigung benötigt</label>
+			<label index="email_linklabel">Bestätigungslink</label>
+			<label index="email_text1">Wir danken für die Benutzung unseres Formulares. Um den Vorgang abzuschließen, bitten wir Sie, den untenstehenden Link zu folgen:</label>
+			<label index="email_text2">Ihr Homepage Team</label>
+			<label index="powermailoptin_ll_confirmation_message">Vielen Dank für Ihre Nachricht. Wir haben soeben eine E-Mail mit einem Bestätigungs-Link an Sie versendet. Bitte nutzen Sie diesen Link zur Freischaltung.</label>
+			<label index="database_content">Kein Email Inhalt: Double opt-in E-Mail wurde versendet</label>
+			<label index="database_noip">IP Speicherung deaktiviert</label>
+			<label index="confirm_redirect">Wenn Sie dies lesen können, klicken Sie bitte diesen Link</label>
+			<label index="confirm_alreadyfilled">Sie haben die Eingabe bereits erfolgreich bestätigt.</label>
+		</languageKey>
+	</data>
+</T3locallang>

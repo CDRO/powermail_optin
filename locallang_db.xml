@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels for database tables/fields belonging to extension 'powermail_optin'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="tx_powermail_mails.tx_powermailoptin_hash">Opt-in hash</label>
+			<label index="tt_content.tx_powermailoptin_optin">Activate Double Opt-in</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="tx_powermail_mails.tx_powermailoptin_hash">Opt-in hash</label>
+			<label index="tt_content.tx_powermailoptin_optin">Double Opt-in aktivieren</label>
+		</languageKey>
+	</data>
+</T3locallang>
