@@ -45,7 +45,7 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
 				'uid',
 				'tx_powermail_mails',
-				$where_clause = 'tx_powermailoptin_hash = '.$piVars['optinhash'].tslib_cObj::enableFields('tx_powermail_mails',	1).' AND hidden = 1',
+				$where_clause = 'tx_powermailoptin_hash = '.strip_tags(addslashes($this->piVars['optinhash'])).tslib_cObj::enableFields('tx_powermail_mails',	1).' AND hidden = 1',
 				$groupBy = '',
 				$orderBy = '',
 				$limit = ''
@@ -53,7 +53,7 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 			if ($res) $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res); // array of database selection
 			
 			// Check if hash is ok
-			if ($row['uid'] > 0 && $row['uid'] == $piVars['optinuid']) { // hash is ok
+			if ($row['uid'] > 0 && $row['uid'] == $this->piVars['optinuid']) { // hash is ok
 				
 				$this->updateMailEntry($row['uid']); // hidden = 0 in database
 				$content = $this->redirect(); // send real mail to receiver
