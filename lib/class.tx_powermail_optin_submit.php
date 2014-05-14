@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2008 Alexander Kellner <alexander.kellner@einpraegsam.net>
+*  (c) 2010 Alexander Kellner <alexander.kellner@einpraegsam.net>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -40,8 +40,15 @@ class tx_powermail_optin_submit extends tslib_pibase {
 	var $sendMail = 1; // disable for testing only (emails)
 	var $tsSetupPostfix = 'tx_powermailoptin.'; // Typoscript name for variables
 
-
-	// Function PM_SubmitBeforeMarkerHook() to manipulate db entry
+	
+	/**
+	 * Function PM_SubmitBeforeMarkerHook() to stop normal powermail process after submit
+	 *
+	 * @param	object		$obj: Parent object
+	 * @param	array		$markerArray: markerArray for tmpl manipulation
+	 * @param	array		$sessiondata: session values from powermail
+	 * @return	boolean
+	 */
 	function PM_SubmitBeforeMarkerHook(&$obj, $markerArray, $sessiondata) {
 		// config
 		global $TSFE;
@@ -55,7 +62,8 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		$this->div = t3lib_div::makeInstance('tx_powermail_optin_div'); // Create new instance for div class
 		$this->receiver = $this->sessiondata[$this->obj->cObj->data['tx_powermail_sender']]; // sender email address
 		$this->hash = $this->div->simpleRandString(); // Get random hash code
-		$this->piVars = t3lib_div::GPvar('tx_powermail_pi1'); // get piVars
+		$this->piVars = t3lib_div::_GP('tx_powermail_pi1'); // get piVars
+		
 		$go = true; // all ok at the beginning
 		if (isset($obj->PM_SubmitBeforeMarkerHook_return) && !empty($obj->PM_SubmitBeforeMarkerHook_return)) { // if there is already an entry from the Hook (maybe spam recognized in wt_spamshield)
 			$go = false; // stop proceeding
@@ -91,9 +99,18 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		
 		return false; // no error return
 	}
+
 	
-	
-	// Function PM_SubmitLastOneHook() to change thx message to "confirmation needed" message
+	/**
+	 * Function PM_SubmitLastOneHook() to change thx message to "confirmation needed" message
+	 *
+	 * @param	string		$content: Content from powermail
+	 * @param	array		$conf: TypoScript configuration
+	 * @param	string		$sessiondata: All user variables from powermail
+	 * @param	boolean		$ok: If no spam (e.g.)
+	 * @param	object		$obj: Parent object
+	 * @return	void
+	 */
 	function PM_SubmitLastOneHook(&$content, $conf, $sessiondata, $ok, $obj) {
 		// config
 		global $TSFE;
@@ -106,7 +123,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		$this->div = t3lib_div::makeInstance('tx_powermail_optin_div'); // Create new instance for div class
 		$this->div_pm = t3lib_div::makeInstance('tx_powermail_functions_div'); // Create new instance for div class of powermail
 		$this->receiver = $this->sessiondata[$this->obj->cObj->data['tx_powermail_sender']]; // sender email address
-		$this->piVars = t3lib_div::GPvar('tx_powermail_pi1'); // get piVars
+		$this->piVars = t3lib_div::_GP('tx_powermail_pi1'); // get piVars
 		
 		// let's start
 		if ( // only if optin is enabled in tt_content AND senderemail is set and valid email AND should proceed
@@ -117,11 +134,11 @@ class tx_powermail_optin_submit extends tslib_pibase {
 			if (empty($this->piVars['optinuid'])) { // if optinuid is not set
 				
 				$markerArray = array(); $tmpl = array(); // init
-				$tmpl['confirmationmessage']['all'] = $this->cObj->getSubpart(tslib_cObj::fileResource($this->conf['tx_powermailoptin.']['template.']['confirmationmessage']), '###POWERMAILOPTIN_CONFIRMATIONMESSAGE###'); // Content for HTML Template
+				$tmpl['confirmationmessage']['all'] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['tx_powermailoptin.']['template.']['confirmationmessage']), '###POWERMAILOPTIN_CONFIRMATIONMESSAGE###'); // Content for HTML Template
 				$markerArray['###POWERMAILOPTIN_MESSAGE###'] = $this->pi_getLL('confirmation_message', 'Look into your mails - confirmation needed'); // mail subject;
 				$content = $this->cObj->substituteMarkerArrayCached($tmpl['confirmationmessage']['all'], $markerArray); // substitute markerArray for HTML content
 				$content = $this->div_pm->marker2value($content, $this->sessiondata); // ###UID34### to its value
-				$content = preg_replace("|###.*?###|i", "", $content); // Finally clear not filled markers
+				$content = preg_replace('|###.*?###|i', '', $content); // Finally clear not filled markers
 			
 			} else { // optinuid is set
 				
@@ -129,7 +146,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
 					'uid',
 					'tx_powermail_mails',
-					$where_clause = 'tx_powermailoptin_hash = ' . strip_tags(addslashes($this->piVars['optinhash'])) . tslib_cObj::enableFields('tx_powermail_mails', 1) . ' AND hidden = 1',
+					$where_clause = 'tx_powermailoptin_hash = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr($this->piVars['optinhash'], 'tx_powermail_mails') . tslib_cObj::enableFields('tx_powermail_mails', 1) . ' AND hidden = 1',
 					$groupBy = '',
 					$orderBy = '',
 					$limit = ''
@@ -147,23 +164,43 @@ class tx_powermail_optin_submit extends tslib_pibase {
 	}
 	
 	
-	// Function sendMail() to send confirmation link to sender
+	/**
+	 * Function sendMail() to send confirmation link to sender
+	 *
+	 * @return	void
+	 */
 	function sendMail() {
 	
 		// Prepare mail content
 		$this->markerArray = $this->tmpl = array(); // init
 		$this->div_pm = t3lib_div::makeInstance('tx_powermail_functions_div'); // Create new instance for div class of powermail
-		$this->tmpl['confirmationemail']['all'] = $this->cObj->getSubpart(tslib_cObj::fileResource($this->conf['tx_powermailoptin.']['template.']['confirmationemail']), '###POWERMAILOPTIN_CONFIRMATIONEMAIL###'); // Content for HTML Template
-		$this->markerArray['###POWERMAILOPTIN_LINK###'] = ($GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] ? $GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] : 'http://'.$_SERVER['HTTP_HOST'].'/') . $this->cObj->typolink('x',array("returnLast"=>"url","parameter"=>$GLOBALS['TSFE']->id,"additionalParams"=>'&tx_powermail_pi1[optinhash]='.$this->hash.'&tx_powermail_pi1[optinuid]='.$this->saveUid,"useCacheHash"=>1)); // Link marker
+		$this->tmpl['confirmationemail']['all'] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['tx_powermailoptin.']['template.']['confirmationemail']), '###POWERMAILOPTIN_CONFIRMATIONEMAIL###'); // Content for HTML Template
+		
+		if (t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST') . '/' != t3lib_div::getIndpEnv('TYPO3_SITE_URL')) { // if request_host is different to site_url (TYPO3 runs in a subfolder)
+			$subfolder = str_replace(t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST') . '/', '', t3lib_div::getIndpEnv('TYPO3_SITE_URL')); // get the folder (like "subfolder/")
+		} else {
+			$subfolder = '';
+		}
+		$this->markerArray['###POWERMAILOPTIN_LINK###'] = $GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] ? $GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] : 'http://' . $_SERVER['HTTP_HOST'] . '/' . $subfolder;
+		$this->markerArray['###POWERMAILOPTIN_LINK###'] .= $this->cObj->typolink(
+			'x',
+			array(
+				'returnLast' => 'url',
+				'parameter' => $GLOBALS['TSFE']->id,
+				'additionalParams' => '&tx_powermail_pi1[optinhash]=' . $this->hash . '&tx_powermail_pi1[optinuid]=' . $this->saveUid,
+				'useCacheHash' => 1
+			)
+		);
 		$this->markerArray['###POWERMAILOPTIN_HASH###'] = $this->hash; // Hash marker
 		$this->markerArray['###POWERMAILOPTIN_MAILUID###'] = $this->saveUid; // uid of last saved mail
 		$this->markerArray['###POWERMAILOPTIN_PID###'] = $GLOBALS['TSFE']->id; // pid of current page
 		$this->markerArray['###POWERMAILOPTIN_LINKLABEL###'] = $this->pi_getLL('email_linklabel', 'Confirmationlink'); // label from locallang
 		$this->markerArray['###POWERMAILOPTIN_TEXT1###'] = $this->pi_getLL('email_text1', 'Confirmationlink'); // label from locallang
 		$this->markerArray['###POWERMAILOPTIN_TEXT2###'] = $this->pi_getLL('email_text2', 'Confirmationlink'); // label from locallang
+		
 		$this->mailcontent = $this->cObj->substituteMarkerArrayCached($this->tmpl['confirmationemail']['all'], $this->markerArray); // substitute markerArray for HTML content
 		$this->mailcontent = $this->div_pm->marker2value($this->mailcontent, $this->sessiondata); // ###UID34### to its value
-		$this->mailcontent = preg_replace("|###.*?###|i", "", $this->mailcontent); // Finally clear not filled markers
+		$this->mailcontent = preg_replace('|###.*?###|i', '', $this->mailcontent); // Finally clear not filled markers
 		
 		// start main mail function
 		$this->htmlMail = t3lib_div::makeInstance('t3lib_htmlmail'); // New object: TYPO3 mail class
@@ -198,12 +235,20 @@ class tx_powermail_optin_submit extends tslib_pibase {
 	}
 	
 	
-	// Function saveMail() to save piVars and some more infos to DB (tx_powermail_mails) with hidden = 1
+	/**
+	 * Function saveMail() to save piVars and some more infos to DB (tx_powermail_mails) with hidden = 1
+	 *
+	 * @return	void
+	 */
 	function saveMail() {
 		
 		$pid = $GLOBALS['TSFE']->id; // current page
-		if ($this->conf['PID.']['dblog'] > 0) $pid = $this->conf['PID.']['dblog']; // take pid from ts
-		if ($this->obj->cObj->data['tx_powermail_pages'] > 0) $pid = $this->obj->cObj->data['tx_powermail_pages'];
+		if ($this->conf['PID.']['dblog'] > 0) {
+			$pid = $this->conf['PID.']['dblog']; // take pid from ts
+		}
+		if ($this->obj->cObj->data['tx_powermail_pages'] > 0) {
+			$pid = $this->obj->cObj->data['tx_powermail_pages'];
+		}
 		
 		// DB entry for table Tabelle: tx_powermail_mails
 		$db_values = array (

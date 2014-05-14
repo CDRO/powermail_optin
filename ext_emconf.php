@@ -12,16 +12,16 @@
 
 $EM_CONF[$_EXTKEY] = array (
 	'title' => 'Powermail double opt-in',
-	'description' => 'Double opt-in for any powermail form. DB entries will be set to hidden up to this moment, where the user clicks a link in a mail...',
+	'description' => 'Double opt-in for powermail forms. Could be used for admin or user check. DB entries are hidden up to this moment, when user clicks a link with a secure hash in a generated mail...',
 	'category' => 'misc',
 	'shy' => 0,
-	'version' => '0.6.1',
+	'version' => '1.0.0',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
 	'loadOrder' => '',
 	'module' => '',
-	'state' => 'beta',
+	'state' => 'stable',
 	'uploadfolder' => 0,
 	'createDirs' => '',
 	'modify_tables' => '',
@@ -36,8 +36,6 @@ $EM_CONF[$_EXTKEY] = array (
 	array (
 		'depends' => 
 		array (
-			'powermail' => '1.4.0-0.0.0',
-			'' => '',
 		),
 		'conflicts' => 
 		array (

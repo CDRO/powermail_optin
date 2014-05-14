@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2008 Alexander Kellner <alexander.kellner@einpraegsam.net>
+*  (c) 2010 Alexander Kellner <alexander.kellner@einpraegsam.net>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -26,14 +26,23 @@ require_once(t3lib_extMgm::extPath('powermail') . 'lib/class.tx_powermail_sessio
 
 class tx_powermail_optin_session extends tslib_pibase {
 
-	// Function PM_MainContentBeforeHook() to set session
+	
+	/**
+	 * Function PM_MainContentBeforeHook() to write in session
+	 *
+	 * @param	array		$sessionfields: Values in session
+	 * @param	array		$piVars: piVars from powermail
+	 * @param	object		$obj: Parent object
+	 * @return	void
+	 */
 	function PM_MainContentBeforeHook(&$sessionfields, $piVars, $obj) {
 		if ($piVars['mailID'] > 0 && $piVars['sendNow'] > 0 && $piVars['optinuid'] > 0 && $piVars['optinhash'] > 0) { // only in this case
+			
 			// Give me all needed fieldsets
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
 				'uid, piVars',
 				'tx_powermail_mails',
-				$where_clause = 'tx_powermailoptin_hash = ' . strip_tags(addslashes($piVars['optinhash'])) . tslib_cObj::enableFields('tx_powermail_mails',	1),
+				$where_clause = 'tx_powermailoptin_hash = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr($piVars['optinhash'], 'tx_powermail_mails') . tslib_cObj::enableFields('tx_powermail_mails',	1),
 				$groupBy = '',
 				$orderBy = '',
 				$limit = ''
@@ -53,12 +62,10 @@ class tx_powermail_optin_session extends tslib_pibase {
 			}
 			
 		}
-		
-		
-		// no return
 	}
 
 }
+
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_optin/lib/class.class.tx_powermail_optin_session.php.php']) {
 	include_once ($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_optin/lib/class.class.tx_powermail_optin_session.php.php']);
 }

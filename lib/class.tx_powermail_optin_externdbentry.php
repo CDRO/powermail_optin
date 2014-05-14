@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2008 Alexander Kellner <alexander.kellner@einpraegsam.net>
+*  (c) 2010 Alexander Kellner <alexander.kellner@einpraegsam.net>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -26,14 +26,24 @@ class tx_powermail_optin_externdbentry extends tslib_pibase {
 
 	var $prefixId = 'tx_powermail_pi1'; // Prefix
 
-	// Function PM_MainContentAfterHook() to manipulate content from powermail
+	
+	/**
+	 * Function PM_MainContentAfterHook() to en- or disable extern db entries
+	 *
+	 * @param	string		$content: Content from powermail
+	 * @param	array		$conf: TypoScript configuration
+	 * @param	string		$session: All user variables from powermail
+	 * @param	boolean		$ok: If no spam (e.g.)
+	 * @param	object		$obj: Parent object
+	 * @return	void
+	 */
 	function PM_SubmitLastOneHook($content, $conf, $session, &$ok, $obj) {
 		
 		// config
 		global $TSFE;
     	$this->cObj = $TSFE->cObj; // cObject
 		$this->obj = $obj;
-		$this->piVars = t3lib_div::GPvar('tx_powermail_pi1'); // get piVars
+		$this->piVars = t3lib_div::_GP('tx_powermail_pi1'); // get piVars
 		
 		// let's go
 		if ($obj->cObj->data['tx_powermailoptin_optin'] == 1) { // only if opt-in enabled in backend
@@ -43,7 +53,7 @@ class tx_powermail_optin_externdbentry extends tslib_pibase {
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
 					'uid',
 					'tx_powermail_mails',
-					$where_clause = 'tx_powermailoptin_hash = '.strip_tags(addslashes($this->piVars['optinhash'])).tslib_cObj::enableFields('tx_powermail_mails', 1),
+					$where_clause = 'tx_powermailoptin_hash = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr($this->piVars['optinhash'], 'tx_powermail_mails') . tslib_cObj::enableFields('tx_powermail_mails', 1),
 					$groupBy = '',
 					$orderBy = '',
 					$limit = ''
@@ -68,6 +78,7 @@ class tx_powermail_optin_externdbentry extends tslib_pibase {
 	}
 
 }
+
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_optin/lib/class.tx_powermail_optin_externdbentry.php']) {
 	include_once ($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_optin/lib/class.tx_powermail_optin_externdbentry.php']);
 }

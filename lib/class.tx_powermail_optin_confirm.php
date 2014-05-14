@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2008 Alexander Kellner <alexander.kellner@einpraegsam.net>
+*  (c) 2010 Alexander Kellner <alexander.kellner@einpraegsam.net>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -26,13 +26,22 @@ if (t3lib_extMgm::isLoaded('wt_spamshield', 0)) {
 	include_once(t3lib_extMgm::extPath('wt_spamshield') . 'ext/class.tx_wtspamshield_powermail.php'); // include div class
 }
 
+
 class tx_powermail_optin_confirm extends tslib_pibase {
 
 	var $prefixId = 'tx_powermail_pi1'; // Prefix
 	var $scriptRelPath = 'lib/class.tx_powermail_optin_confirm.php';	// Path to this script relative to the extension dir.
 	var $extKey        = 'powermail_optin';	// The extension key.
 
-	// Function PM_MainContentAfterHook() to manipulate content from powermail
+	
+	/**
+	 * Function PM_MainContentAfterHook() to manipulate content from powermail
+	 *
+	 * @param	string		$content: Content from powermail
+	 * @param	string		$piVars: All user variables from powermail
+	 * @param	object		$obj: Parent object
+	 * @return	void
+	 */
 	function PM_MainContentAfterHook(&$content, $piVars, $obj) {
 		
 		// config
@@ -49,7 +58,7 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
 				'uid',
 				'tx_powermail_mails',
-				$where_clause = 'tx_powermailoptin_hash = ' . strip_tags(addslashes($this->piVars['optinhash'])) . tslib_cObj::enableFields('tx_powermail_mails', 1) . ' AND hidden = 1',
+				$where_clause = 'tx_powermailoptin_hash = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr($this->piVars['optinhash'], 'tx_powermail_mails') . tslib_cObj::enableFields('tx_powermail_mails', 1) . ' AND hidden = 1',
 				$groupBy = '',
 				$orderBy = '',
 				$limit = ''
@@ -73,7 +82,11 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 	}
 	
 	
-	// Function redirect() redirects to powermail // sends main email to powermail receiver
+	/**
+	 * Function redirect() redirects to powermail // sends main email to powermail receiver
+	 *
+	 * @return	Link for redirect (normally not needed because of the header redirect)
+	 */
 	function redirect() {
 		if (class_exists('tx_wtspamshield_div')) { // if spamshield div class exists
 			$wtspamshield_div = t3lib_div::makeInstance('tx_wtspamshield_div'); // Generate Instance for div method
@@ -83,10 +96,11 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 		$typolink_conf = array (
 		  'returnLast' => 'url', // Give me only the string
 		  'parameter' => $GLOBALS['TSFE']->id, // target pid
-		  'additionalParams' => '&' . $this->prefixId . '[mailID]=' . $this->obj->cObj->data['uid'] . '&' . $this->prefixId . '[sendNow]=1&' . $this->prefixId . '[optinuid]=' . $this->piVars['optinuid'] . '&' . $this->prefixId . '[optinhash]=' . $this->piVars['optinhash'],
-		  'useCacheHash' => 0 // Don't use cache
+		  'useCacheHash' => 0, // Don't use cache
+		  'section' => '', // clear section value if any
+		  'additionalParams' => '&' . $this->prefixId . '[mailID]=' . $this->obj->cObj->data['uid'] . '&' . $this->prefixId . '[sendNow]=1&' . $this->prefixId . '[optinuid]=' . $this->piVars['optinuid'] . '&' . $this->prefixId . '[optinhash]=' . $this->piVars['optinhash']
 		);
-		$link = ($GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] ? $GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] : 'http://' . $_SERVER['HTTP_HOST'] . '/') . $this->cObj->typolink('x', $typolink_conf); // Create target url
+		$link = t3lib_div::locationHeaderUrl($this->cObj->typolink('x', $typolink_conf)); // Create target url
 						
 		// Header for redirect
 		header('Location: ' . $link); 
