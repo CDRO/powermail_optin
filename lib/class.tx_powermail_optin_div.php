@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2010 Alex Kellner <alexander.kellner@in2code.de>
+*  (c) 2008 Alexander Kellner <alexander.kellner@einpraegsam.net>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -25,15 +25,7 @@
 
 class tx_powermail_optin_div extends tslib_pibase {
 
-	
-	/**
-	 * Generates random string
-	 *
-	 * @param	int		$len: String length
-	 * @param	string	$list: Allowed signs
-	 * @return	random string
-	 */
-	function simpleRandString($len = 8, $list = '23456789ABCDEFGHJKMNPQRSTUVWXYZ') {
+	function simpleRandString ($len = 8, $list = '23456789ABCDEFGHJKMNPQRSTUVWXYZ') {
 		$str = '';
 		if (is_numeric ($len) && !empty ($list)) {
 			mt_srand ((double) microtime () * 1000000);
@@ -44,30 +36,7 @@ class tx_powermail_optin_div extends tslib_pibase {
 		return t3lib_div::md5int($str);
 	}
 
-	
-	/**
-	 * Function updateMailEntry() set mail entry of powermail from hidden=1 to hidden=0
-	 *
-	 * @param	int		$uid: mail uid to manipulate
-	 * @return	void
-	 */
-	function updateMailEntry($uid) {
-		
-		if ($uid > 0) {
-			// Update tx_powermail_mails SET hidden = 0
-			$GLOBALS['TYPO3_DB']->exec_UPDATEquery (
-				'tx_powermail_mails',
-				'uid = ' . intval($uid),
-				array (
-					'tstamp' => time(),
-					'hidden' => 0
-				)
-			);
-		}
-	}
-
 }
-
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_optin/lib/class.tx_powermail_optin_div.php']) {
 	include_once ($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_optin/lib/class.tx_powermail_optin_div.php']);
 }

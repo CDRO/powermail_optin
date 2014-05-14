@@ -3,7 +3,7 @@
 /***************************************************************
  * Extension Manager/Repository config file for ext "powermail_optin".
  *
- * Auto generated 09-01-2013 13:11
+ * Auto generated 14-05-2014 08:05
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
@@ -12,30 +12,32 @@
 
 $EM_CONF[$_EXTKEY] = array (
 	'title' => 'Powermail double opt-in',
-	'description' => 'Double opt-in for powermail forms. Could be used for admin or user check. DB entries are hidden up to this moment, when user clicks a link with a secure hash in a generated mail...',
+	'description' => 'Double opt-in for any powermail form. DB entries will be set to hidden up to this moment, where the user klicks a link in a mail...',
 	'category' => 'misc',
 	'shy' => 0,
-	'version' => '1.0.1',
+	'version' => '0.1.0',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
 	'loadOrder' => '',
 	'module' => '',
-	'state' => 'stable',
+	'state' => 'alpha',
 	'uploadfolder' => 0,
 	'createDirs' => '',
 	'modify_tables' => '',
 	'clearcacheonload' => 0,
 	'lockType' => '',
-	'author' => 'Alex Kellner',
-	'author_email' => 'alexander.kellner@in2code.de',
-	'author_company' => 'in2code',
+	'author' => 'Alexander Kellner',
+	'author_email' => 'alexander.kellner@einpraegsam.net',
+	'author_company' => '',
 	'CGLcompliance' => NULL,
 	'CGLcompliance_note' => NULL,
 	'constraints' => 
 	array (
 		'depends' => 
 		array (
+			'cms' => '',
+			'powermail' => '1.1.3-9.9.9',
 		),
 		'conflicts' => 
 		array (
