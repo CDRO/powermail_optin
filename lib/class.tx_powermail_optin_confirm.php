@@ -23,7 +23,7 @@
 ***************************************************************/
 
 if (t3lib_extMgm::isLoaded('wt_spamshield', 0)) {
-	include_once(t3lib_extMgm::extPath('wt_spamshield') . 'ext/class.class.tx_wtspamshield_powermail.php'); // include div class
+	include_once(t3lib_extMgm::extPath('wt_spamshield') . 'ext/class.tx_wtspamshield_powermail.php'); // include div class
 }
 
 class tx_powermail_optin_confirm extends tslib_pibase {

@@ -22,19 +22,18 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-require_once(t3lib_extMgm::extPath('powermail').'lib/class.tx_powermail_sessions.php'); // file for powermail session functions
+require_once(t3lib_extMgm::extPath('powermail') . 'lib/class.tx_powermail_sessions.php'); // file for powermail session functions
 
 class tx_powermail_optin_session extends tslib_pibase {
 
 	// Function PM_MainContentBeforeHook() to set session
 	function PM_MainContentBeforeHook(&$sessionfields, $piVars, $obj) {
-		
 		if ($piVars['mailID'] > 0 && $piVars['sendNow'] > 0 && $piVars['optinuid'] > 0 && $piVars['optinhash'] > 0) { // only in this case
 			// Give me all needed fieldsets
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
-				'uid,piVars',
+				'uid, piVars',
 				'tx_powermail_mails',
-				$where_clause = 'tx_powermailoptin_hash = '.strip_tags(addslashes($piVars['optinhash'])).tslib_cObj::enableFields('tx_powermail_mails',	0),
+				$where_clause = 'tx_powermailoptin_hash = ' . strip_tags(addslashes($piVars['optinhash'])) . tslib_cObj::enableFields('tx_powermail_mails',	1),
 				$groupBy = '',
 				$orderBy = '',
 				$limit = ''
@@ -49,7 +48,7 @@ class tx_powermail_optin_session extends tslib_pibase {
 				// write values to session
 				$this->session = t3lib_div::makeInstance('tx_powermail_sessions'); // Create new instance for powermail session class
 				
-				$GLOBALS['TSFE']->fe_user->setKey('ses', 'powermail_'.$piVars['mailID'], $sessionfields); // Generate Session with piVars array
+				$GLOBALS['TSFE']->fe_user->setKey('ses', 'powermail_' . $piVars['mailID'], $sessionfields); // Generate Session with piVars array
 				$GLOBALS['TSFE']->storeSessionData(); // Save session
 			}
 			
