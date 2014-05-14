@@ -3,7 +3,7 @@
 /***************************************************************
  * Extension Manager/Repository config file for ext "powermail_optin".
  *
- * Auto generated 14-05-2014 08:05
+ * Auto generated 14-05-2014 08:06
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array (
 	'description' => 'Double opt-in for any powermail form. DB entries will be set to hidden up to this moment, where the user klicks a link in a mail...',
 	'category' => 'misc',
 	'shy' => 0,
-	'version' => '0.1.0',
+	'version' => '0.1.1',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
@@ -36,8 +36,6 @@ $EM_CONF[$_EXTKEY] = array (
 	array (
 		'depends' => 
 		array (
-			'cms' => '',
-			'powermail' => '1.1.3-9.9.9',
 		),
 		'conflicts' => 
 		array (

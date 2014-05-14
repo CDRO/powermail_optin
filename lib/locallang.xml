@@ -13,6 +13,8 @@
 			<label index="confirmation_message">Thank you for your message. We've sent you an email with a confirmation link. Please use this link to go on.</label>
 			<label index="database_content">No mailcontent: Double opt-in mail was send instead of default mail</label>
 			<label index="database_noip">IP logging disabled</label>
+			<label index="confirm_redirect">If you can see this, please use this link</label>
+			<label index="confirm_alreadyfilled">You have alredy finished the confirmation.</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="email_subject">Bestätigung benötigt</label>
@@ -22,6 +24,8 @@
 			<label index="confirmation_message">Vielen Dank für Ihre Nachricht. Wir haben soeben eine E-Mail mit einem Bestätigungs-Link an Sie versendet. Bitte nutzen Sie diesen Link zur Freischaltung.</label>
 			<label index="database_content">Kein Email Inhalt: Double opt-in E-Mail wurde versendet</label>
 			<label index="database_noip">IP Speicherung deaktiviert</label>
+			<label index="confirm_redirect">Wenn Sie dies lesen können, klicken Sie bitte diesen Link</label>
+			<label index="confirm_alreadyfilled">Sie haben die Eingabe bereits erfolgreich bestätigt.</label>
 		</languageKey>
 		<languageKey index="en" type="array">
 			<label index="email_subject">Confirmation needed</label>
@@ -31,6 +35,8 @@
 			<label index="confirmation_message">Thank you for your message. We've sent you an email with a confirmation link. Please use this link to go on.</label>
 			<label index="database_content">No mailcontent: Double opt-in mail was send instead of default mail</label>
 			<label index="database_noip">IP logging disabled</label>
+			<label index="confirm_redirect">If you can see this, please use this link</label>
+			<label index="confirm_alreadyfilled">You have alredy finished the confirmation.</label>
 		</languageKey>
 	</data>
 </T3locallang>

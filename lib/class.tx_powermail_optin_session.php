@@ -44,21 +44,15 @@ class tx_powermail_optin_session extends tslib_pibase {
 			if ($res) $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res); // array of database selection
 			
 			// Check if hash is ok
-			if ($row['uid'] == $piVars['optinuid']) { // hash is ok
+			if ($row['uid'] > 0 && $row['uid'] == $piVars['optinuid']) { // hash is ok
 				$sessionfields = t3lib_div::xml2array($row['piVars'], 'piVars'); // values from database
+				if (!is_array($sessionfields)) $sessionfields = t3lib_div::xml2array(utf8_encode($row['piVars']), 'piVars'); // values from database
 				
 				// write values to session
-				
 				$this->session = t3lib_div::makeInstance('tx_powermail_sessions'); // Create new instance for powermail session class
-				/*print_r($sessionfields);
-				$this->session->setSession($sessionfields, 1); // Write session with piVars from database
-				*/
 				
 				$GLOBALS['TSFE']->fe_user->setKey("ses", 'powermail_'.$piVars['mailID'], $sessionfields); // Generate Session with piVars array
 				$GLOBALS['TSFE']->storeSessionData(); // Save session
-					
-				$test = $this->session->getSession();
-				//print_r($test);
 			}
 			
 		}

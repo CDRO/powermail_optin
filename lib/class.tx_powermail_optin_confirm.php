@@ -25,11 +25,14 @@
 class tx_powermail_optin_confirm extends tslib_pibase {
 
 	var $prefixId = 'tx_powermail_pi1'; // Prefix
+	var $scriptRelPath = 'lib/class.tx_powermail_optin_confirm.php';	// Path to this script relative to the extension dir.
+	var $extKey        = 'powermail_optin';	// The extension key.
 
 	// Function PM_MainContentAfterHook() to manipulate content from powermail
 	function PM_MainContentAfterHook(&$content, $piVars, $obj) {
 		
 		// config
+		$this->pi_loadLL();
 		global $TSFE;
     	$this->cObj = $TSFE->cObj; // cObject
 		$this->obj = $obj;
@@ -42,7 +45,7 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
 				'uid',
 				'tx_powermail_mails',
-				$where_clause = 'tx_powermailoptin_hash = '.$piVars['optinhash'].tslib_cObj::enableFields('tx_powermail_mails',	1),
+				$where_clause = 'tx_powermailoptin_hash = '.$piVars['optinhash'].tslib_cObj::enableFields('tx_powermail_mails',	1).' AND hidden = 1',
 				$groupBy = '',
 				$orderBy = '',
 				$limit = ''
@@ -50,15 +53,14 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 			if ($res) $row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res); // array of database selection
 			
 			// Check if hash is ok
-			if ($row['uid'] == $piVars['optinuid']) { // hash is ok
+			if ($row['uid'] > 0 && $row['uid'] == $piVars['optinuid']) { // hash is ok
 				
 				$this->updateMailEntry($row['uid']); // hidden = 0 in database
-				$this->redirect(); // send real mail to receiver
-				$content = 'Das darf nicht gesehen werden';
+				$content = $this->redirect(); // send real mail to receiver
 			
 			} else { // hash is not ok
 				
-				$content = 'passt nicht';
+				$content = '<b>'.$this->pi_getLL('confirm_alreadyfilled', 'You have alredy finished the confirmation.').'</b>';
 			
 			}
 			
@@ -83,6 +85,7 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 		header("Location: $link"); 
 		header("Connection: close");
 		
+		return '<a href="'.$link.'">'.$this->pi_getLL('confirm_redirect', 'If you can see this, please use this link').'</a>';
 	}
 	
 	
@@ -95,6 +98,7 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 				'tx_powermail_mails',
 				'uid = '.$uid,
 				array (
+					'tstamp' => time(),
 					'hidden' => 0
 				)
 			);

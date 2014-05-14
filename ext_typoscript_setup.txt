@@ -2,6 +2,6 @@
 plugin.tx_powermailoptin {
 	template.confirmationemail = {$plugin.powermail_optin.template.confirmationemail}
 	template.confirmationmessage = {$plugin.powermail_optin.template.confirmationmessage}
-	email.subject = {$plugin.powermail_optin.email.subject}
 	email.cc = {$plugin.powermail_optin.email.cc}
+	email.subjectoverwrite = {$plugin.powermail_optin.email.subjectoverwrite}
 }

@@ -9,9 +9,9 @@ plugin.powermail_optin {
 	# cat=plugin.powermail_optin/file/020; type=file[html,htm,tmpl,txt]; label= Template File for message: HTML-template file for confirmation-needed message in frontend (see EXT:powermail_optin/templates/tmpl_confirmationmessage.html for an example)
 	template.confirmationmessage = EXT:powermail_optin/templates/tmpl_confirmationmessage.html
 	
-	# cat=plugin.powermail_optin//100; type=text; label= Email subject: Default subject for confirmation mail
-	email.subject = 
-	
 	# cat=plugin.powermail_optin//110; type=text; label= CC Email address: Email address for copy of confirmation email (maybe admin for testing)
 	email.cc = 
+	
+	# cat=plugin.powermail_optin//110; type=text; label= Confirmation email subject: Overwrite default subject with your own subject
+	email.subjectoverwrite = 
 }

@@ -33,7 +33,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 	var $pi_checkCHash = true;
 	var $dbInsert = 1; // disable for testing only (db entry)
 	var $sendMail = 1; // disable for testing only (emails)
-	var $tsSetupPostfix = 'tx_powermailoptin.'; // Typoscript name vor variables
+	var $tsSetupPostfix = 'tx_powermailoptin.'; // Typoscript name for variables
 
 	// Function PM_SubmitBeforeMarkerHook() to manipulate db entry
 	function PM_SubmitBeforeMarkerHook(&$obj, $markerArray, $sessiondata) {
@@ -112,6 +112,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 	
 		// Prepare mail content
 		$this->markerArray = array(); $this->tmpl = array(); // init
+		$this->div_pm = t3lib_div::makeInstance('tx_powermail_functions_div'); // Create new instance for div class of powermail
 		$this->tmpl['confirmationemail']['all'] = $this->cObj->getSubpart(tslib_cObj::fileResource($this->conf['tx_powermailoptin.']['template.']['confirmationemail']), '###POWERMAILOPTIN_CONFIRMATIONEMAIL###'); // Content for HTML Template
 		$this->markerArray['###POWERMAILOPTIN_LINK###'] = ($GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] ? $GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] : 'http://'.$_SERVER['HTTP_HOST'].'/') . $this->cObj->typolink('x',array("returnLast"=>"url","parameter"=>$GLOBALS['TSFE']->id,"additionalParams"=>'&tx_powermail_pi1[optinhash]='.$this->hash.'&tx_powermail_pi1[optinuid]='.$this->saveUid,"useCacheHash"=>1)); // Link marker
 		$this->markerArray['###POWERMAILOPTIN_HASH###'] = $this->hash; // Hash marker
@@ -121,6 +122,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		$this->markerArray['###POWERMAILOPTIN_TEXT1###'] = $this->pi_getLL('email_text1', 'Confirmationlink'); // label from locallang
 		$this->markerArray['###POWERMAILOPTIN_TEXT2###'] = $this->pi_getLL('email_text2', 'Confirmationlink'); // label from locallang
 		$this->mailcontent = $this->cObj->substituteMarkerArrayCached($this->tmpl['confirmationemail']['all'], $this->markerArray); // substitute markerArray for HTML content
+		$this->mailcontent = $this->div_pm->marker2value($this->mailcontent, $this->sessiondata); // ###UID34### to its value
 		$this->mailcontent = preg_replace("|###.*?###|i","", $this->mailcontent); // Finally clear not filled markers
 		
 		// start main mail function
@@ -128,7 +130,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		$this->htmlMail->start(); // start htmlmail
 		$this->htmlMail->recipient = $this->receiver; // main receiver email address
 		$this->htmlMail->recipient_copy = (t3lib_div::validEmail($this->conf['tx_powermailoptin.']['email.']['cc']) ? $this->conf['tx_powermailoptin.']['email.']['cc'] : ''); // cc field (other email addresses from ts)
-		$this->htmlMail->subject = $this->pi_getLL('email_subject', 'Confirmation needed'); // mail subject
+		$this->htmlMail->subject = ($this->conf['tx_powermailoptin.']['email.']['subjectoverwrite'] ? $this->conf['tx_powermailoptin.']['email.']['subjectoverwrite'] : $this->pi_getLL('email_subject', 'Confirmation needed') ); // mail subject
 		$this->htmlMail->from_email = $this->obj->pibase->submit->sender; // sender email address
 		$this->htmlMail->from_name = $this->obj->pibase->submit->sendername; // sender email name
 		$this->htmlMail->returnPath = $this->obj->pibase->submit->sender; // return path
@@ -138,7 +140,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		$this->htmlMail->defaultCharset = $GLOBALS['TSFE']->metaCharset; // set current charset
 		$this->htmlMail->addPlain($this->mailcontent);
 		$this->htmlMail->setHTML($this->htmlMail->encodeMsg($this->mailcontent));
-		if ($this->sendMail) $this->htmlMail->send($this->maildata['receiver']);
+		if ($this->sendMail) $this->htmlMail->send($this->receiver);
 	}
 	
 	
