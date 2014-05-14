@@ -22,8 +22,8 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-require_once(t3lib_extMgm::extPath('powermail_optin').'lib/class.tx_powermail_optin_div.php'); // load div class
-require_once(t3lib_extMgm::extPath('powermail').'lib/class.tx_powermail_functions_div.php'); // load div class of powermail
+require_once(t3lib_extMgm::extPath('powermail_optin') . 'lib/class.tx_powermail_optin_div.php'); // load div class
+require_once(t3lib_extMgm::extPath('powermail') . 'lib/class.tx_powermail_functions_div.php'); // load div class of powermail
 
 class tx_powermail_optin_submit extends tslib_pibase {
 	
@@ -34,6 +34,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 	var $dbInsert = 1; // disable for testing only (db entry)
 	var $sendMail = 1; // disable for testing only (emails)
 	var $tsSetupPostfix = 'tx_powermailoptin.'; // Typoscript name for variables
+
 
 	// Function PM_SubmitBeforeMarkerHook() to manipulate db entry
 	function PM_SubmitBeforeMarkerHook(&$obj, $markerArray, $sessiondata) {
@@ -130,7 +131,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		// start main mail function
 		$this->htmlMail = t3lib_div::makeInstance('t3lib_htmlmail'); // New object: TYPO3 mail class
 		$this->htmlMail->start(); // start htmlmail
-		$this->htmlMail->recipient = $this->receiver; // main receiver email address
+		$this->htmlMail->recipient = (t3lib_div::validEmail($this->conf['tx_powermailoptin.']['email.']['receiverOverwrite']) ? $this->conf['tx_powermailoptin.']['email.']['receiverOverwrite'] : $this->receiver); // main receiver email address
 		$this->htmlMail->recipient_copy = (t3lib_div::validEmail($this->conf['tx_powermailoptin.']['email.']['cc']) ? $this->conf['tx_powermailoptin.']['email.']['cc'] : ''); // cc field (other email addresses from ts)
 		$this->htmlMail->subject = ($this->conf['tx_powermailoptin.']['email.']['subjectoverwrite'] ? $this->conf['tx_powermailoptin.']['email.']['subjectoverwrite'] : $this->pi_getLL('email_subject', 'Confirmation needed') ); // mail subject
 		$this->htmlMail->from_email = $this->obj->sender; // sender email address
@@ -142,7 +143,21 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		$this->htmlMail->defaultCharset = $GLOBALS['TSFE']->metaCharset; // set current charset
 		$this->htmlMail->addPlain($this->mailcontent);
 		$this->htmlMail->setHTML($this->htmlMail->encodeMsg($this->mailcontent));
-		if ($this->sendMail) $this->htmlMail->send($this->receiver);
+		if ($this->sendMail) {
+			$this->htmlMail->send(t3lib_div::validEmail($this->conf['tx_powermailoptin.']['email.']['receiverOverwrite']) ? $this->conf['tx_powermailoptin.']['email.']['receiverOverwrite'] : $this->receiver);
+		}
+					
+		if ($this->conf['tx_powermailoptin.']['debug'] == 1) { // if debug output enabled
+			$d_array = array(
+				'receiver' => (t3lib_div::validEmail($this->conf['tx_powermailoptin.']['email.']['receiverOverwrite']) ? $this->conf['tx_powermailoptin.']['email.']['receiverOverwrite'] : $this->receiver),
+				'cc receiver' => (t3lib_div::validEmail($this->conf['tx_powermailoptin.']['email.']['cc']) ? $this->conf['tx_powermailoptin.']['email.']['cc'] : ''),
+				'sender' => $this->obj->sender,
+				'sender name' => $this->obj->sendername,
+				'subject' => ($this->conf['tx_powermailoptin.']['email.']['subjectoverwrite'] ? $this->conf['tx_powermailoptin.']['email.']['subjectoverwrite'] : $this->pi_getLL('email_subject', 'Confirmation needed') ),
+				'body' => $this->mailcontent
+			);
+			t3lib_div::debug($d_array, 'powermail_optin: Values in confirmation email');
+		}
 	}
 	
 	
@@ -173,8 +188,12 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		);
 		
 		if ($this->dbInsert) {
+			if ($this->conf['tx_powermailoptin.']['debug'] == 1) { // if debug output enabled
+				t3lib_div::debug($db_values, 'powermail_optin: Save this values to db');
+			}
 			$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_powermail_mails', $db_values); // DB entry
-			$this->saveUid = mysql_insert_id(); // Give me the uid if the last saved mail
+			$this->saveUid = $GLOBALS['TYPO3_DB']->sql_insert_id(); // Give me the uid if the last saved mail
+
 		}
 	}
 

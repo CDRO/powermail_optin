@@ -1,16 +1,16 @@
 # TYPO3 Extension "powermail_optin"
 Double opt-in for powermail forms. Could be used for admin or user check. DB entries are hidden up to this moment, when user clicks a link with a secure hash in a generated mail...
 
-## Version 0.5.0
+## Version 0.5.1
 ** BE AWARE: This extension has been marked as insecure by the security team! **.
 
 
 
 <table>
-	<tr><td>Version</td><td>0.5.0 alpha</td></tr>
-	<tr><td>Release date</td><td>11. November 2008</td></tr>
+	<tr><td>Version</td><td>0.5.1 beta</td></tr>
+	<tr><td>Release date</td><td>06. February 2010</td></tr>
 	<tr><td>Author</td><td>Alexander Kellner</td></tr>
-	<tr><td>Comment</td><td>Now ready for powermail 1.4 and higher...</td></tr>
+	<tr><td>Comment</td><td>Feature 6381, Bugfix 6358</td></tr>
 </table>
 
 ## !! Attention !!
