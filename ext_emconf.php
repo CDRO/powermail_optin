@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array (
 	'description' => 'Double opt-in for any powermail form. DB entries will be set to hidden up to this moment, where the user klicks a link in a mail...',
 	'category' => 'misc',
 	'shy' => 0,
-	'version' => '0.2.0',
+	'version' => '0.5.0',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
@@ -36,6 +36,8 @@ $EM_CONF[$_EXTKEY] = array (
 	array (
 		'depends' => 
 		array (
+			'powermail' => '1.4.0-0.0.0',
+			'' => '',
 		),
 		'conflicts' => 
 		array (

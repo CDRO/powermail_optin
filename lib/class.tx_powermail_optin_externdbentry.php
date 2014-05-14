@@ -33,9 +33,10 @@ class tx_powermail_optin_externdbentry extends tslib_pibase {
 		global $TSFE;
     	$this->cObj = $TSFE->cObj; // cObject
 		$this->obj = $obj;
+		$this->piVars = t3lib_div::GPvar('tx_powermail_pi1'); // get piVars
 		
 		// let's go
-		if ($obj->pibase->cObj->data['tx_powermailoptin_optin'] == 1) { // only if opt-in enabled in backend
+		if ($obj->cObj->data['tx_powermailoptin_optin'] == 1) { // only if opt-in enabled in backend
 			if ($this->piVars['optinhash'] > 0 && $this->piVars['optinuid'] > 0 && $this->piVars['sendNow'] && $this->piVars['mailID']) { // only if GET param optinhash and optenuid is set
 				
 				// Give me all needed fieldsets
