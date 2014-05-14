@@ -25,7 +25,15 @@
 
 class tx_powermail_optin_div extends tslib_pibase {
 
-	function simpleRandString ($len = 8, $list = '23456789ABCDEFGHJKMNPQRSTUVWXYZ') {
+	
+	/**
+	 * Generates random string
+	 *
+	 * @param	int		$len: String length
+	 * @param	string	$list: Allowed signs
+	 * @return	random string
+	 */
+	function simpleRandString($len = 8, $list = '23456789ABCDEFGHJKMNPQRSTUVWXYZ') {
 		$str = '';
 		if (is_numeric ($len) && !empty ($list)) {
 			mt_srand ((double) microtime () * 1000000);
@@ -34,6 +42,28 @@ class tx_powermail_optin_div extends tslib_pibase {
 			}
 		}
 		return t3lib_div::md5int($str);
+	}
+
+	
+	/**
+	 * Function updateMailEntry() set mail entry of powermail from hidden=1 to hidden=0
+	 *
+	 * @param	int		$uid: mail uid to manipulate
+	 * @return	void
+	 */
+	function updateMailEntry($uid) {
+		
+		if ($uid > 0) {
+			// Update tx_powermail_mails SET hidden = 0
+			$GLOBALS['TYPO3_DB']->exec_UPDATEquery (
+				'tx_powermail_mails',
+				'uid = ' . intval($uid),
+				array (
+					'tstamp' => time(),
+					'hidden' => 0
+				)
+			);
+		}
 	}
 
 }

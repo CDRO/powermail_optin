@@ -22,6 +22,10 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
+if (t3lib_extMgm::isLoaded('wt_spamshield', 0)) {
+	include_once(t3lib_extMgm::extPath('wt_spamshield') . 'ext/class.class.tx_wtspamshield_powermail.php'); // include div class
+}
+
 class tx_powermail_optin_confirm extends tslib_pibase {
 
 	var $prefixId = 'tx_powermail_pi1'; // Prefix
@@ -41,7 +45,7 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 		// let's go
 		if ($this->piVars['optinhash'] > 0 && $this->piVars['optinuid'] > 0 && !$this->piVars['sendNow'] && !$this->piVars['mailID']) { // only if GET param optinhash and optenuid is set
 			
-			// Give me all needed fieldsets
+			// Give me all needed mails
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
 				'uid',
 				'tx_powermail_mails',
@@ -55,12 +59,11 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 			// Check if hash is ok
 			if ($row['uid'] > 0 && $row['uid'] == $this->piVars['optinuid']) { // hash is ok
 				
-				$this->updateMailEntry($row['uid']); // hidden = 0 in database
-				$content = $this->redirect(); // send real mail to receiver
+				$content = $this->redirect(); // send real mail to receiver (mail is still with hidden=1)
 			
 			} else { // hash is not ok
 				
-				$content = '<b>'.$this->pi_getLL('confirm_alreadyfilled', 'You have alredy finished the confirmation.').'</b>';
+				$content = '<b>' . $this->pi_getLL('confirm_alreadyfilled', 'You have alredy finished the confirmation.') . '</b>';
 			
 			}
 			
@@ -70,39 +73,26 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 	}
 	
 	
-	// Function updateMailEntry() set hidden to 0
-	function updateMailEntry($uid) {
-		
-		if ($uid > 0) {
-			// Update tx_powermail_mails SET hidden = 0
-			$GLOBALS['TYPO3_DB']->exec_UPDATEquery (
-				'tx_powermail_mails',
-				'uid = '.$uid,
-				array (
-					'tstamp' => time(),
-					'hidden' => 0
-				)
-			);
-		}
-	}
-	
-	
 	// Function redirect() redirects to powermail // sends main email to powermail receiver
 	function redirect() {
+		if (class_exists('tx_wtspamshield_div')) { // if spamshield div class exists
+			$wtspamshield_div = t3lib_div::makeInstance('tx_wtspamshield_div'); // Generate Instance for div method
+			$wtspamshield_div->disableSpamshieldForCurrentPage(); // turn off spamshield now
+		}
 		
 		$typolink_conf = array (
-		  "returnLast" => "url", // Give me only the string
-		  "parameter" => $GLOBALS['TSFE']->id, // target pid
-		  "additionalParams" => '&'.$this->prefixId.'[mailID]='.$this->obj->cObj->data['uid'].'&'.$this->prefixId.'[sendNow]=1&'.$this->prefixId.'[optinuid]='.$this->piVars['optinuid'].'&'.$this->prefixId.'[optinhash]='.$this->piVars['optinhash'],
-		  "useCacheHash" => 0 // Don't use cache
+		  'returnLast' => 'url', // Give me only the string
+		  'parameter' => $GLOBALS['TSFE']->id, // target pid
+		  'additionalParams' => '&' . $this->prefixId . '[mailID]=' . $this->obj->cObj->data['uid'] . '&' . $this->prefixId . '[sendNow]=1&' . $this->prefixId . '[optinuid]=' . $this->piVars['optinuid'] . '&' . $this->prefixId . '[optinhash]=' . $this->piVars['optinhash'],
+		  'useCacheHash' => 0 // Don't use cache
 		);
-		$link = ($GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] ? $GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] : 'http://'.$_SERVER['HTTP_HOST'].'/') . $this->cObj->typolink('x', $typolink_conf); // Create target url
+		$link = ($GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] ? $GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'] : 'http://' . $_SERVER['HTTP_HOST'] . '/') . $this->cObj->typolink('x', $typolink_conf); // Create target url
 						
 		// Header for redirect
-		header("Location: $link"); 
-		header("Connection: close");
+		header('Location: ' . $link); 
+		header('Connection: close');
 		
-		return '<a href="'.$link.'">'.$this->pi_getLL('confirm_redirect', 'If you can see this, please use this link').'</a>';
+		return '<a href="' . $link . '">' . $this->pi_getLL('confirm_redirect', 'If you can see this, please use this link') . '</a>';
 	}
 
 }
