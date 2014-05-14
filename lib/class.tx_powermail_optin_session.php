@@ -26,8 +26,6 @@ require_once(t3lib_extMgm::extPath('powermail').'lib/class.tx_powermail_sessions
 
 class tx_powermail_optin_session extends tslib_pibase {
 
-	//var $prefixId = 'tx_powermail_pi1'; // Prefix
-
 	// Function PM_MainContentBeforeHook() to set session
 	function PM_MainContentBeforeHook(&$sessionfields, $piVars, $obj) {
 		

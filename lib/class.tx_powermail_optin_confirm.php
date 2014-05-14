@@ -45,7 +45,7 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery (
 				'uid',
 				'tx_powermail_mails',
-				$where_clause = 'tx_powermailoptin_hash = '.strip_tags(addslashes($this->piVars['optinhash'])).tslib_cObj::enableFields('tx_powermail_mails',	1).' AND hidden = 1',
+				$where_clause = 'tx_powermailoptin_hash = ' . strip_tags(addslashes($this->piVars['optinhash'])) . tslib_cObj::enableFields('tx_powermail_mails', 1) . ' AND hidden = 1',
 				$groupBy = '',
 				$orderBy = '',
 				$limit = ''
@@ -70,6 +70,23 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 	}
 	
 	
+	// Function updateMailEntry() set hidden to 0
+	function updateMailEntry($uid) {
+		
+		if ($uid > 0) {
+			// Update tx_powermail_mails SET hidden = 0
+			$GLOBALS['TYPO3_DB']->exec_UPDATEquery (
+				'tx_powermail_mails',
+				'uid = '.$uid,
+				array (
+					'tstamp' => time(),
+					'hidden' => 0
+				)
+			);
+		}
+	}
+	
+	
 	// Function redirect() redirects to powermail // sends main email to powermail receiver
 	function redirect() {
 		
@@ -87,25 +104,9 @@ class tx_powermail_optin_confirm extends tslib_pibase {
 		
 		return '<a href="'.$link.'">'.$this->pi_getLL('confirm_redirect', 'If you can see this, please use this link').'</a>';
 	}
-	
-	
-	// Function updateMailEntry() set hidden to 0
-	function updateMailEntry($uid) {
-		
-		if ($uid > 0) {
-			// Update tx_powermail_mails SET hidden = 0
-			$GLOBALS['TYPO3_DB']->exec_UPDATEquery (
-				'tx_powermail_mails',
-				'uid = '.$uid,
-				array (
-					'tstamp' => time(),
-					'hidden' => 0
-				)
-			);
-		}
-	}
 
 }
+
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_optin/lib/class.tx_powermail_optin_submit.php']) {
 	include_once ($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/powermail_optin/lib/class.tx_powermail_optin_submit.php']);
 }

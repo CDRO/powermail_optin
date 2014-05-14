@@ -147,9 +147,13 @@ class tx_powermail_optin_submit extends tslib_pibase {
 	// Function saveMail() to save piVars and some more infos to DB (tx_powermail_mails) with hidden = 1
 	function saveMail() {
 		
+		$pid = $GLOBALS['TSFE']->id; // current page
+		if ($this->conf['PID.']['dblog'] > 0) $pid = $this->conf['PID.']['dblog']; // take pid from ts
+		if ($this->obj->pibase->cObj->data['tx_powermail_pages'] > 0) $pid = $this->obj->pibase->cObj->data['tx_powermail_pages'];
+		
 		// DB entry for table Tabelle: tx_powermail_mails
 		$db_values = array (
-			'pid' => ($this->conf['PID.']['dblog'] > 0 ? $this->save_PID = $this->conf['PID.']['dblog'] : $this->save_PID = $GLOBALS['TSFE']->id), // PID
+			'pid' => intval($pid), // PID
 			'tstamp' => time(), // save current time
 			'crdate' => time(), // save current time
 			'hidden' => 1, // save as hidden
