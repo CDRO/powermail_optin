@@ -1,4 +1,4 @@
-<?
+<?php
 if (!defined ('TYPO3_MODE')) die ('Access denied.');
 
 // Use hook in submit.php before db => saving and sending emails

@@ -29,7 +29,7 @@ class tx_powermail_optin_session extends tslib_pibase {
 	//var $prefixId = 'tx_powermail_pi1'; // Prefix
 
 	// Function PM_MainContentBeforeHook() to set session
-	function PM_MainContentBeforeHook(&$sessionfields, $piVars, $this) {
+	function PM_MainContentBeforeHook(&$sessionfields, $piVars, $obj) {
 		
 		if ($piVars['mailID'] > 0 && $piVars['sendNow'] > 0 && $piVars['optinuid'] > 0 && $piVars['optinhash'] > 0) { // only in this case
 			// Give me all needed fieldsets
