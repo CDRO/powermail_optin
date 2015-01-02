@@ -34,14 +34,14 @@ class tx_powermail_optin_div extends tslib_pibase {
 	 * @return	random string
 	 */
 	function simpleRandString($len = 32, $list = '23456789abcdefghijklmnopqrstufwxyzABCDEFGHJKMNPQRSTUVWXYZ') {
-		$str = '';
+		$randomString = '';
+		$listLength = strlen($list) - 1;
 		if (is_numeric ($len) && !empty ($list)) {
-			mt_srand ((double) microtime () * 1000000);
-			while (strlen ($str) < $len) {
-				$str .= $list[mt_rand (0, strlen ($list)-1)];
+			for($pos = 0; $pos < $len; $pos++) {
+				$randomString .= $list[rand(0, $listLength)];
 			}
 		}
-		return t3lib_div::md5int($str);
+		return $randomString;
 	}
 
 	
