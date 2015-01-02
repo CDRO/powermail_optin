@@ -19,6 +19,12 @@ plugin.powermail_optin {
 	# cat=plugin.powermail_optin//130; type=text; label= Confirmation email subject: Overwrite default subject with your own subject
 	email.subjectoverwrite = 
 	
+	# cat=plugin.powermail_optin//140; type=text; label= Confirmation email sender: Overwrite name of sender
+	email.senderOverwrite = 
+	
+	# cat=plugin.powermail_optin//150; type=text; label= Confirmation email senderemail: Overwrite email address of sender
+	email.senderEmailOverwrite = 
+	
 	# cat=plugin.powermail_optin//999; type=boolean; label= Debug Output: Show values which are inserted in the db and show values from email
 	debug = 0
 	

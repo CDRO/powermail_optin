@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2010 Alexander Kellner <alexander.kellner@einpraegsam.net>
+*  (c) 2010 Alex Kellner <alexander.kellner@in2code.de>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -23,6 +23,7 @@
 ***************************************************************/
 
 require_once(t3lib_extMgm::extPath('powermail_optin') . 'lib/class.tx_powermail_optin_div.php'); // load div class
+require_once(t3lib_extMgm::extPath('powermail_optin') . 'lib/class.tx_powermail_optin_dynamicmarkers.php'); // load dynamicmarkers class
 require_once(t3lib_extMgm::extPath('powermail') . 'lib/class.tx_powermail_functions_div.php'); // load div class of powermail
 if (t3lib_extMgm::isLoaded('wt_spamshield', 0)) {
 	if (file_exists(t3lib_extMgm::extPath('wt_spamshield') . 'lib/class.tx_powermail_optin_div.php')) { // if file exists
@@ -122,6 +123,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		$this->conf[$this->tsSetupPostfix] = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->tsSetupPostfix];
 		$this->div = t3lib_div::makeInstance('tx_powermail_optin_div'); // Create new instance for div class
 		$this->div_pm = t3lib_div::makeInstance('tx_powermail_functions_div'); // Create new instance for div class of powermail
+		$this->dynamicMarkers = t3lib_div::makeInstance('tx_powermail_optin_dynamicmarkers'); // Create new instance for dynamicmarkers class
 		$this->receiver = $this->sessiondata[$this->obj->cObj->data['tx_powermail_sender']]; // sender email address
 		$this->piVars = t3lib_div::_GP('tx_powermail_pi1'); // get piVars
 		
@@ -138,6 +140,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 				$markerArray['###POWERMAILOPTIN_MESSAGE###'] = $this->pi_getLL('confirmation_message', 'Look into your mails - confirmation needed'); // mail subject;
 				$content = $this->cObj->substituteMarkerArrayCached($tmpl['confirmationmessage']['all'], $markerArray); // substitute markerArray for HTML content
 				$content = $this->div_pm->marker2value($content, $this->sessiondata); // ###UID34### to its value
+				$content = $this->dynamicMarkers->main($content, $this); // Fill dynamic locallang or typoscript markers
 				$content = preg_replace('|###.*?###|i', '', $content); // Finally clear not filled markers
 			
 			} else { // optinuid is set
@@ -174,6 +177,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		// Prepare mail content
 		$this->markerArray = $this->tmpl = array(); // init
 		$this->div_pm = t3lib_div::makeInstance('tx_powermail_functions_div'); // Create new instance for div class of powermail
+		$this->dynamicMarkers = t3lib_div::makeInstance('tx_powermail_optin_dynamicmarkers'); // Create new instance for dynamicmarkers class
 		$this->tmpl['confirmationemail']['all'] = $this->cObj->getSubpart($this->cObj->fileResource($this->conf['tx_powermailoptin.']['template.']['confirmationemail']), '###POWERMAILOPTIN_CONFIRMATIONEMAIL###'); // Content for HTML Template
 		
 		if (t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST') . '/' != t3lib_div::getIndpEnv('TYPO3_SITE_URL')) { // if request_host is different to site_url (TYPO3 runs in a subfolder)
@@ -200,6 +204,7 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		
 		$this->mailcontent = $this->cObj->substituteMarkerArrayCached($this->tmpl['confirmationemail']['all'], $this->markerArray); // substitute markerArray for HTML content
 		$this->mailcontent = $this->div_pm->marker2value($this->mailcontent, $this->sessiondata); // ###UID34### to its value
+		$this->mailcontent = $this->dynamicMarkers->main($this->mailcontent, $this); // Fill dynamic locallang or typoscript markers
 		$this->mailcontent = preg_replace('|###.*?###|i', '', $this->mailcontent); // Finally clear not filled markers
 		
 		// start main mail function
@@ -208,9 +213,9 @@ class tx_powermail_optin_submit extends tslib_pibase {
 		$this->htmlMail->recipient = (t3lib_div::validEmail($this->conf['tx_powermailoptin.']['email.']['receiverOverwrite']) ? $this->conf['tx_powermailoptin.']['email.']['receiverOverwrite'] : $this->receiver); // main receiver email address
 		$this->htmlMail->recipient_copy = (t3lib_div::validEmail($this->conf['tx_powermailoptin.']['email.']['cc']) ? $this->conf['tx_powermailoptin.']['email.']['cc'] : ''); // cc field (other email addresses from ts)
 		$this->htmlMail->subject = ($this->conf['tx_powermailoptin.']['email.']['subjectoverwrite'] ? $this->conf['tx_powermailoptin.']['email.']['subjectoverwrite'] : $this->pi_getLL('email_subject', 'Confirmation needed') ); // mail subject
-		$this->htmlMail->from_email = $this->obj->sender; // sender email address
-		$this->htmlMail->from_name = $this->obj->sendername; // sender email name
-		$this->htmlMail->returnPath = $this->obj->sender; // return path
+		$this->htmlMail->from_email = t3lib_div::validEmail($this->conf['tx_powermailoptin.']['email.']['senderEmailOverwrite']) ? $this->conf['tx_powermailoptin.']['email.']['senderEmailOverwrite'] : $this->obj->MainReceiver; // sender email address
+		$this->htmlMail->from_name = !empty($this->conf['tx_powermailoptin.']['email.']['senderOverwrite']) ? $this->conf['tx_powermailoptin.']['email.']['senderOverwrite'] : $this->obj->sendername; // sender email name
+		$this->htmlMail->returnPath = t3lib_div::validEmail($this->conf['tx_powermailoptin.']['email.']['senderEmailOverwrite']) ? $this->conf['tx_powermailoptin.']['email.']['senderEmailOverwrite'] : $this->obj->MainReceiver; // return path
 		$this->htmlMail->replyto_email = ''; // clear replyto email
 		$this->htmlMail->replyto_name = ''; // clear replyto name
 		$this->htmlMail->charset = $GLOBALS['TSFE']->metaCharset; // set current charset

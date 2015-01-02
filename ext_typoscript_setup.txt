@@ -5,5 +5,7 @@ plugin.tx_powermailoptin {
 	email.receiverOverwrite = {$plugin.powermail_optin.email.receiverOverwrite}
 	email.cc = {$plugin.powermail_optin.email.cc}
 	email.subjectoverwrite = {$plugin.powermail_optin.email.subjectoverwrite}
+	email.senderOverwrite = {$plugin.powermail_optin.email.senderOverwrite}
+	email.senderEmailOverwrite = {$plugin.powermail_optin.email.senderEmailOverwrite}
 	debug = {$plugin.powermail_optin.debug}
 }

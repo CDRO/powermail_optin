@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2010 Alexander Kellner <alexander.kellner@einpraegsam.net>
+*  (c) 2010 Alex Kellner <alexander.kellner@in2code.de>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
