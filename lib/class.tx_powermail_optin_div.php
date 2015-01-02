@@ -33,7 +33,7 @@ class tx_powermail_optin_div extends tslib_pibase {
 	 * @param	string	$list: Allowed signs
 	 * @return	random string
 	 */
-	function simpleRandString($len = 8, $list = '23456789ABCDEFGHJKMNPQRSTUVWXYZ') {
+	function simpleRandString($len = 32, $list = '23456789ABCDEFGHJKMNPQRSTUVWXYZ') {
 		$str = '';
 		if (is_numeric ($len) && !empty ($list)) {
 			mt_srand ((double) microtime () * 1000000);
